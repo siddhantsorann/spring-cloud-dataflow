@@ -76,13 +76,15 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 
 	private static final String NAME_AND_STATUS_FILTER = "I.JOB_NAME LIKE ? AND E.STATUS = ?";
 
+	private static final String START_DATE_BETWEEN_FILTER = "E.START_TIME BETWEEN ? AND ?";
+
 	private PagingQueryProvider allExecutionsPagingQueryProvider;
 
 	private PagingQueryProvider byJobNamePagingQueryProvider;
 
 	private PagingQueryProvider byStatusPagingQueryProvider;
 
-    private PagingQueryProvider byJobNameAndStatusPagingQueryProvider;
+	private PagingQueryProvider byJobNameAndStatusPagingQueryProvider;
 
 	private PagingQueryProvider byJobNameWithStepCountPagingQueryProvider;
 
@@ -119,7 +121,7 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 		executionsWithStepCountPagingQueryProvider = getPagingQueryProvider(FIELDS_WITH_STEP_COUNT, null, null);
 		byJobNamePagingQueryProvider = getPagingQueryProvider(NAME_FILTER);
 		byStatusPagingQueryProvider = getPagingQueryProvider(STATUS_FILTER);
-        byJobNameAndStatusPagingQueryProvider = getPagingQueryProvider(NAME_AND_STATUS_FILTER);
+		byJobNameAndStatusPagingQueryProvider = getPagingQueryProvider(NAME_AND_STATUS_FILTER);
 		byJobNameWithStepCountPagingQueryProvider = getPagingQueryProvider(FIELDS_WITH_STEP_COUNT, null, NAME_FILTER);
 
 		super.afterPropertiesSet();
@@ -417,5 +419,9 @@ public class JdbcSearchableJobExecutionDao extends JdbcJobExecutionDao implement
 		jobExecution.setLastUpdated(rs.getTimestamp(8));
 		jobExecution.setVersion(rs.getInt(9));
 		return jobExecution;
+	}
+
+	private String joinFilters(String filter1, String filter2) {
+		return filter1 + " AND " + filter2;
 	}
 }
